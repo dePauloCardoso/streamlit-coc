@@ -107,7 +107,7 @@ df_filtrado = df[filtro]
 # Exibe os resultados em tabela
 if not df_filtrado.empty:
     colunas_desejadas = ['SEGMENTO', 'SERIE', 'SKU_COMBO_EBS',
-                        'SKU_KIT_EBS', 'SKU_ITENS_EBS', 'TIPO_PRODUTO', 'FREQUÊNCIA']
+                        'SKU_KIT_EBS', 'SKU_ITENS_EBS', 'TIPO_PRODUTO', 'FREQUÊNCIA','DESCRIÇÃO LISTA DE PREÇO EBS']
     df_filtrado = df_filtrado[colunas_desejadas]
     st.dataframe(df_filtrado, use_container_width=True)
 else:
