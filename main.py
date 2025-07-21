@@ -24,7 +24,7 @@ st.markdown(
 )
 
 # Exibe a imagem
-st.sidebar.image("https://github.com/dePauloCardoso/streamlit_app/blob/main/Logo_SAE.png?raw=true")
+st.sidebar.image("https://github.com/dePauloCardoso/streamlit-coc/blob/main/logo-coc-secundario-2.png?raw=true")
 
 # Inicializa os filtros no session_state
 if "SEGMENTO" not in st.session_state:
