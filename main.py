@@ -41,6 +41,8 @@ if "TIPO_PRODUTO" not in st.session_state:
     st.session_state.TIPO_PRODUTO = ""
 if "FREQUÊNCIA" not in st.session_state:
     st.session_state.FREQUÊNCIA = ""
+if "COLECAO" not in st.session_state:
+    st.session_state.COLECAO = ""
 
 # # Mapeamento de Série baseado no Segmento
 # serie_map = {
@@ -55,28 +57,50 @@ if "FREQUÊNCIA" not in st.session_state:
 # Interface Streamlit
 st.sidebar.title("Consulta de Produtos")
 
+# SEGMENTO 
+segmento_options = [""] + [
+    'ENSINO INFANTIL','ENSINO FUNDAMENTAL 1','ENSINO FUNDAMENTAL 2',
+    'ENSINO MEDIO','PRE - VESTIBULAR'
+    ]
+# Determina o índice atual para o selectbox, evitando erro se o valor não estiver na lista
+current_segmento_index = segmento_options.index(st.session_state.SEGMENTO) if st.session_state.SEGMENTO in segmento_options else 0
+st.session_state.SEGMENTO = st.sidebar.selectbox("Segmento", segmento_options, index=current_segmento_index)
+
+# SERIE 
+serie_options = [""] + [
+    'BERCARIO',	'1 ANO', '2 ANO', '3 ANO', 
+    '4 ANO', '5 ANO', '6 ANO', '7 ANO', '8 ANO', 
+    '9 ANO', 'EXTENSIVO', 'SEMI EXTENSIVO',	
+    'INTENSIVO'
+    ]
+# Determina o índice atual para o selectbox, evitando erro se o valor não estiver na lista
+current_serie_index = serie_options.index(st.session_state.SERIE) if st.session_state.SERIE in serie_options else 0
+st.session_state.SERIE = st.sidebar.selectbox("Serie", serie_options, index=current_serie_index)
+
 # Campos de entrada para os filtros
 st.session_state.SKU_COMBO_EBS = st.sidebar.text_input("SKU_COMBO_EBS", st.session_state.SKU_COMBO_EBS)
 st.session_state.SKU_KIT_EBS = st.sidebar.text_input("SKU_KIT_EBS", st.session_state.SKU_KIT_EBS)
 st.session_state.SKU_ITENS_EBS = st.sidebar.text_input("SKU_ITENS_EBS", st.session_state.SKU_ITENS_EBS)
 
-# # Dropdowns para os filtros
-# segmento_options = ["", "INF", "FUND AI", "FUND AF", "EM", "PV", "VÁRIOS"]
-# st.session_state.segmento = st.sidebar.selectbox("Segmento", segmento_options, index=segmento_options.index(st.session_state.segmento))
+# TIPO_PRODUTO 
+tipo_options = [""] + ['ALUNO', 'PROFESSOR']
 
-# # Atualiza as opções do dropdown de série baseado no segmento escolhido
-# serie_options = serie_map.get(st.session_state.segmento, [""])
-# st.session_state.serie = st.sidebar.selectbox("Série", serie_options, index=serie_options.index(st.session_state.serie) if st.session_state.serie in serie_options else 0)
+# Determina o índice atual para o selectbox, evitando erro se o valor não estiver na lista
+current_tipo_index = tipo_options.index(st.session_state.TIPO_PRODUTO) if st.session_state.TIPO_PRODUTO in tipo_options else 0
+st.session_state.TIPO_PRODUTO = st.sidebar.selectbox("Tipo", tipo_options, index=current_tipo_index)
 
-# # Outros filtros
-# envio_options = ["", "V1", "V2", "V3", "V4"]
-# st.session_state.envio = st.sidebar.selectbox("Envio", envio_options, index=envio_options.index(st.session_state.envio))
-
-# usuario_options = ["", "Aluno", "Professor"]
-# st.session_state.usuario = st.sidebar.selectbox("Usuário", usuario_options, index=usuario_options.index(st.session_state.usuario))
-
-# personalizacao_options = ["", "CAMILA MOREIRA", "CCPA", "CELLULA MATER", "DOM BOSCO", "DOM BOSCO BALSAS", "ELO", "FATO", "FILOMENA", "GABARITO MG", "GABARITO RS", "MACK", "MAXX JUNIOR", "MELLO DANTE", "REDE AGNUS", "REDE VIVO", "REFERENCIAL", "ROSALVO", "SAE", "SANTO ANJO", "SECULO", "STATUS", "TAMANDARE"]
-# st.session_state.personalizacao = st.sidebar.selectbox("Personalização", personalizacao_options, index=personalizacao_options.index(st.session_state.personalizacao))
+# COLEÇÃO (Corrigido a sintaxe da lista e a lógica do selectbox)
+colecao_options = [""] + [ 
+    'EXPLORAR', 'AGENDA IMPRESSA', 'AVULSO', 
+    'INFINITO', 'AZUL', 'TERCEIRAO EXTENSIVO 1000',
+    'TERCEIRAO SEMIEXTENSIVO 500', 'AMARELA',
+    'PV EXTENSIVO 1000', 'PV SEMI EXTENSIVO ANUAL 500',
+    'PV SEMI EXTENSIVO 1 SEM 500', 'PV SEMI EXTENSIVO 2 SEM 500',
+    'PV INTENSIVO 300'
+]
+# Determina o índice atual para o selectbox, evitando erro se o valor não estiver na lista
+current_colecao_index = colecao_options.index(st.session_state.COLECAO) if st.session_state.COLECAO in colecao_options else 0
+st.session_state.COLECAO = st.sidebar.selectbox("Coleção", colecao_options, index=current_colecao_index)
 
 # Botão para limpar filtros
 def limpar_filtros():
@@ -101,13 +125,16 @@ if st.session_state.TIPO_PRODUTO:
     filtro &= df['TIPO_PRODUTO'] == st.session_state.TIPO_PRODUTO
 if st.session_state.FREQUÊNCIA:
     filtro &= df['FREQUÊNCIA'] == st.session_state.FREQUÊNCIA
+if st.session_state.COLECAO:
+    filtro &= df['COLECAO'] == st.session_state.COLECAO
 
 df_filtrado = df[filtro]
 
 # Exibe os resultados em tabela
 if not df_filtrado.empty:
     colunas_desejadas = ['SEGMENTO', 'SERIE', 'SKU_COMBO_EBS',
-                        'SKU_KIT_EBS', 'SKU_ITENS_EBS', 'TIPO_PRODUTO', 'FREQUÊNCIA','DESCRIÇÃO LISTA DE PREÇO EBS']
+                        'SKU_KIT_EBS', 'SKU_ITENS_EBS', 'DESCRIÇÃO LISTA DE PREÇO EBS', 
+                        'TIPO_PRODUTO', 'FREQUÊNCIA', 'COLECAO']
     df_filtrado = df_filtrado[colunas_desejadas]
     st.dataframe(df_filtrado, use_container_width=True)
 else:
